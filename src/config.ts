@@ -33,7 +33,7 @@ export interface CloakingConfig {
     "agent-base-url"?: string;
     "api-base-url"?: string;
     "config-version"?: string;
-    "timezone"?: string;
+    timezone?: string;
     "ghost-mode"?: string;
   };
 }
@@ -42,6 +42,11 @@ export interface TimeoutConfig {
   "messages-ms": number;
   "stream-messages-ms": number;
   "count-tokens-ms": number;
+}
+
+export interface StatsConfig {
+  /** Default true. Set false to disable per-request stats recording entirely. */
+  enabled: boolean;
 }
 
 export type DebugMode = "off" | "errors" | "verbose";
@@ -54,6 +59,7 @@ export interface Config {
   "body-limit": string;
   cloaking: CloakingConfig;
   timeouts: TimeoutConfig;
+  stats: StatsConfig;
   debug: DebugMode;
 }
 
@@ -76,6 +82,9 @@ const DEFAULT_RAW: RawConfig = {
     "messages-ms": 120000,
     "stream-messages-ms": 600000,
     "count-tokens-ms": 30000,
+  },
+  stats: {
+    enabled: true,
   },
   debug: "off",
 };
@@ -122,6 +131,7 @@ export function loadConfig(configPath?: string): Config {
       ...parsed,
       cloaking: { ...DEFAULT_RAW.cloaking, ...(parsed.cloaking || {}) },
       timeouts: { ...DEFAULT_RAW.timeouts, ...(parsed.timeouts || {}) },
+      stats: { ...DEFAULT_RAW.stats, ...(parsed.stats || {}) },
     };
   }
 
